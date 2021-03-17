@@ -61,6 +61,8 @@ rootpw --lock
 #fedora stuff
 dnf-plugins-core
 
+# using gdm as display manager
+gdm
 
 #packages for swaywm
 sway
@@ -76,6 +78,9 @@ i3status-rust
 wl-clipboard
 qt5ct
 polkit-gnome
+NetworkManager-tui
+network-manager-applet
+nm-connection-editor
 
 #themes and tools for theming
 gsettings-desktop-schemas
@@ -100,6 +105,7 @@ p7zip
 ripgrep
 ffmpeg
 wget
+gopass
 
 # make kakoune a beast
 kakoune
@@ -112,6 +118,7 @@ sourcetrail
 code
 zeal
 python-pipenv
+poetry
 docker-ce
 docker-ce-cli
 containerd.io
@@ -124,25 +131,21 @@ google-droid-sans-mono-fonts
 fontawesome-fonts
 fontawesome-fonts-web
 
-# user security
-gopass
 
-# system security
-pam_yubico
-pam_2fa
-pamu2fcfg
+# network security
 firewalld
 
-#security auditing
+# security auditing
 clamav
 clamav-unofficial-sigs
 clamav-update
 unhide
 rkhunter
 
-#yubikey related packages
+# yubikey related packages
 pam_yubico
 pam_2fa
+pamu2fcfg
 
 
 # applications
@@ -158,18 +161,19 @@ thunar-sendto-clamtk
 thunar-media-tags-plugin
 thunar-vcs-plugin
 thunar-vfs
+
+# zathura: lightweight,keyboard friendly pdf viewer
 zathura
 zathura-fish-completion
 zathura-pdf-mupdf
 zathura-djvu
 %end
 
-# SELINUX Stuff
-# ensure clamav has unrestricted access
-setsebool -P antivirus_can_scan_system 1
+# Enable SELinux 
+selinux --enforcing
 
 #add user
-user --name=Daedalus --password=$USERPASS --groups=wheel
+#user --name=Daedalus --password=$USERPASS --groups=wheel
 
 %anaconda
 pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
@@ -193,6 +197,10 @@ dnf config-manager -y add-repo "https://download.docker.com/linux/fedora/docker-
 #enable github cli repo
 dnf config-manager -y add-repo "https://cli.github.com/packages/rpm/gh-cli.repo"
 
+
+# ensure clamav has unrestricted access
+setsebool -P antivirus_can_scan_system 1
+
 #create a freshclam
 freshclam
 
@@ -201,8 +209,9 @@ systemctl enable clamav-freshclam.service
 systemctl enable clamav-unofficial-sigs.timer
 systemctl unmask firewalld
 systemctl enable firewalld
+systemctl enable gdm
 
-#download droid sans mono for powerline
+#download droid sans mono patched font for powerline
 cd /usr/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
 cd /
 

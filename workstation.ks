@@ -99,6 +99,7 @@ bat
 p7zip
 ripgrep
 ffmpeg
+wget
 
 # make kakoune a beast
 kakoune
@@ -201,7 +202,17 @@ systemctl enable clamav-unofficial-sigs.timer
 systemctl unmask firewalld
 systemctl enable firewalld
 
-runuser -u Daedalus git clone --bare "https://github.com/skewballfox/.cfg.git" "/home/daedalus/.config/git/cfg"
+#download droid sans mono for powerline
+cd /usr/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+cd /
+
+#things to run on new user creation
+echo 'git clone --bare "https://github.com/skewballfox/.cfg.git" "/$HOME/.config/git/cfg"'>>/usr/local/sbin/adduser.local
+echo 'wget -O $HOME/.gnupg/gpg.conf https://raw.githubusercontent.com/drduh/config/master/gpg.conf'>>/usr/local/sbin/adduser.local
+echo 'wget -O $HOME/.gnupg/gpg-agent.conf  https://raw.githubusercontent.com/drduh/config/master/gpg-agent.conf'>>/usr/local/sbin/adduser.local
+echo 'chmod 600 $HOME/.gnupg/gpg.conf'>>/usr/local/sbin/adduser.local
+
+chmod u+x /usr/local/sbin/adduser.local
 
 
 %end

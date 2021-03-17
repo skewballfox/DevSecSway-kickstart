@@ -9,6 +9,9 @@ repo --name=rpmfusion-nonfree-updates --mirrorlist="https://mirrors.rpmfusion.or
 repo --name=gopass --baseurl="https://download.copr.fedorainfracloud.org/results/dauftaupe/gopass/fedora-33-x86_64/"
 repo --name=kakoune --baseurl="https://download.copr.fedorainfracloud.org/results/atim/kakoune/fedora-33-x86_64/"
 repo --name=code --baseurl="https://packages.microsoft.com/yumrepos/vscode"
+repo --name=docker --baseurl="https://download.docker.com/linux/fedora/docker-ce.repo"
+repo --name=github-cli --baseurl="https://cli.github.com/packages/rpm/gh-cli.repo"
+
 
 
 # Use graphical install
@@ -54,6 +57,10 @@ rootpw --lock
 @networkmanager-submodules
 @hardware-support
 @Multimedia
+
+#fedora stuff
+dnf-plugins-core
+
 
 #packages for swaywm
 sway
@@ -103,9 +110,10 @@ ccls
 sourcetrail
 code
 zeal
-chromium-freeworld
 python-pipenv
-
+docker-ce
+docker-ce-cli
+containerd.io
 
 
 #fonts
@@ -153,6 +161,10 @@ zathura-pdf-mupdf
 zathura-djvu
 %end
 
+# SELINUX Stuff
+# ensure clamav has unrestricted access
+setsebool -P antivirus_can_scan_system 1
+
 #add user
 user --name=Daedalus --password=$USERPASS --groups=wheel
 
@@ -163,13 +175,21 @@ pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
 %end
 
 %post
-# enable repositories
+# enable rpmfusion repositories
 dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm 
 
-dnf copr enable -y atim/kakoune daftaupe/gopass zawertun/crystal
+dnf copr enable -y atim/kakoune daftaupe/gopass
 
+# enable vscode repo
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
-
 echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo
+
+# enable docker repo
+dnf config-manager -y add-repo "https://download.docker.com/linux/fedora/docker-ce.repo"
+
+#enable github cli repo
+dnf config-manager -y add-repo "https://cli.github.com/packages/rpm/gh-cli.repo"
+
+
 
 %end

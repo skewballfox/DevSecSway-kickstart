@@ -114,6 +114,7 @@ python-pipenv
 docker-ce
 docker-ce-cli
 containerd.io
+gh
 
 
 #fonts
@@ -129,6 +130,7 @@ gopass
 pam_yubico
 pam_2fa
 pamu2fcfg
+firewalld
 
 #security auditing
 clamav
@@ -190,6 +192,16 @@ dnf config-manager -y add-repo "https://download.docker.com/linux/fedora/docker-
 #enable github cli repo
 dnf config-manager -y add-repo "https://cli.github.com/packages/rpm/gh-cli.repo"
 
+#create a freshclam
+freshclam
+
+# Systemd services and timers
+systemctl enable clamav-freshclam.service
+systemctl enable clamav-unofficial-sigs.timer
+systemctl unmask firewalld
+systemctl enable firewalld
+
+runuser -u Daedalus git clone --bare "https://github.com/skewballfox/.cfg.git" "/home/daedalus/.config/git/cfg"
 
 
 %end
